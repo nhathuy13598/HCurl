@@ -4,7 +4,8 @@ project(HCurl)
 find_package(CURL REQUIRED)
 
 add_executable(example
-                example.cpp)
+                example.cpp
+                HCurl.cpp)
 
 include_directories(${CURL_INCLUDE_DIR})
 target_link_libraries(example ${CURL_LIBRARY})

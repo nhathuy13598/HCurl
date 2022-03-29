@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <curl/curl.h>
+#include "HCurl.h"
 
 static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
@@ -10,6 +11,10 @@ static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *use
 
 int main(void)
 {
+    HCurl test;
+    test.set(CURLOPT_URL, "http://www.google.com");
+    test.request();
+    test.getinfo();
     CURL *curl;
     CURLcode res;
     std::string readBuffer;
