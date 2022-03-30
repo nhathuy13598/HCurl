@@ -1,34 +1,21 @@
 #include <iostream>
-#include <string>
+#include <sstream>
 #include <curl/curl.h>
 #include "HCurl.h"
 
-static size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp)
-{
-    ((std::string *)userp)->append((char *)contents, size * nmemb);
-    return size * nmemb;
-}
-
 int main(void)
 {
-    HCurl test;
-    test.set(CURLOPT_URL, "http://www.google.com");
-    test.request();
-    test.getinfo();
-    CURL *curl;
-    CURLcode res;
-    std::string readBuffer;
+    std::stringstream input;
+    std::stringstream output;
+    HCurl curl;
 
-    curl = curl_easy_init();
-    if (curl)
-    {
-        curl_easy_setopt(curl, CURLOPT_URL, "http://www.google.com");
-        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-        curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-        res = curl_easy_perform(curl);
-        curl_easy_cleanup(curl);
-
-        std::cout << readBuffer << std::endl;
-    }
+    curl.post("https://www.google.com");
+    curl.set_ostream(&output).set_write_cb(HCurl::write_callback);
+    curl.set_istream(&input).set_read_cb(HCurl::read_callback);
+    curl.request();
+    auto result = curl.getinfo();
+    std::cout << result.first << std::endl;
+    std::cout << result.second << std::endl;
+    std::cout << "Content: " << output.str() << std::endl;
     return 0;
 }
